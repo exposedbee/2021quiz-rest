@@ -42,6 +42,11 @@ public class QuestionDAO extends GenericDAO<Question> {
         return super.search(criteria, getParamsFunction, "from Question where quiz_id=:id ");
     }
 
+//    public List<Question> getAllAvailableQuestion(){
+//        return super.search(null, choice -> new HashMap(), "from Question where quiz_id=null ");
+////        return super.search(criteria, getParamsFunction, "from Question where quiz_id=:id ");
+//    }
+
     public Question find(Question toDataModelWithId) {
         return super.find(Question.class,toDataModelWithId.getQuestionId());
     }

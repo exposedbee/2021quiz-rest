@@ -1,10 +1,8 @@
 package database.DTO;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import database.Quiz;
 
-import java.util.Arrays;
 import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class QuizDTO {
@@ -12,14 +10,14 @@ public class QuizDTO {
     private int id;
     private String quizname;
     private String topics;
-    private List<QuestionDTO> questionDTO;
+    private List<QuestionDTO> questions;
 
-    public List<QuestionDTO> getQuestionDTO() {
-        return questionDTO;
+    public List<QuestionDTO> getQuestions() {
+        return questions;
     }
 
-    public void setQuestionDTO(List<QuestionDTO> questionDTO) {
-        this.questionDTO = questionDTO;
+    public void setQuestions(List<QuestionDTO> questions) {
+        this.questions = questions;
     }
 
     public int getId() {

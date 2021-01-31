@@ -6,19 +6,19 @@ import database.MCQChoice;
 import database.Question;
 import services.MCQChoiceDAO;
 import services.QuestionDAO;
-
+import database.DTO.QuizDTO;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-public class QuestionCreationDataService {
-    Logger l;
+public class QuestionReportingDataService {
+//    Logger l;
     private MCQChoiceDAO mcqChoiceDAO;
     private QuestionDAO questionDAO;
 
-    public QuestionCreationDataService(){
+    public QuestionReportingDataService(){
         mcqChoiceDAO= new MCQChoiceDAO();
         questionDAO= new QuestionDAO();
     }
@@ -34,6 +34,10 @@ public class QuestionCreationDataService {
                 if (questionDTO == null) {
                     questionDTO = new QuestionDTO();
                     questionDTO.fromDataModel(question);
+                    if(question.getQuiz()!=null)
+                    {QuizDTO q=new QuizDTO();
+                    q.fromDataModel(question.getQuiz());
+                    questionDTO.setQuiz(q);}
                     dtoList.put(currentId, questionDTO);
 //                System.out.println(questionDTO.toString());
                 }
@@ -116,13 +120,8 @@ public class QuestionCreationDataService {
         return null;
     }
 
-    public List<QuestionDTO> getQuestionByIdWhere(int id) {
-        List<Question> result=getQuestion(id);
-        if(result.size()>=0){
-            MCQChoice criteri= new MCQChoice();
-            criteri.setQuestion(result.get(0));
-            return convertFromDAO(mcqChoiceDAO.searchByCriteriaIdWhere(criteri));
-        }
-        return null;
+    public MCQChoiceDTO getChoiceById(int id) {
+        MCQChoiceDTO result=new MCQChoiceDTO();
+        return result.fromDataModel(mcqChoiceDAO.find(MCQChoice.class,id));
     }
 }

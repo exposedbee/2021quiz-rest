@@ -18,10 +18,10 @@ public class QuizReportingDataService {
     private QuizDAO quizDAO;
     private MCQChoiceDAO mcqChoiceDAO;
     private QuestionDAO questionDAO;
-    private QuestionCreationDataService questionCreationDataService;
+    private QuestionReportingDataService questionReportingDataService;
 
     public QuizReportingDataService(){
-        questionCreationDataService= new QuestionCreationDataService();
+        questionReportingDataService = new QuestionReportingDataService();
         quizDAO=new QuizDAO();
         mcqChoiceDAO= new MCQChoiceDAO();
         questionDAO= new QuestionDAO();
@@ -67,18 +67,18 @@ public class QuizReportingDataService {
 //                System.out.println(choices);
             }
         }
-        quizDTO.setQuestionDTO(new ArrayList<>(dtoList.values()));
+        quizDTO.setQuestions(new ArrayList<>(dtoList.values()));
         return quizDTO;
     }
 
     public Validate getQuizResult(QuizDTO quiz) {
-        if(quizDAO.find(Quiz.class,quiz.getId())==null || quiz.getQuestionDTO().size()==0)
+        if(quizDAO.find(Quiz.class,quiz.getId())==null || quiz.getQuestions().size()==0)
             System.out.println("error in here");
         else{
             Validate result=new Validate();
-            for(QuestionDTO questionDTO:quiz.getQuestionDTO()){
+            for(QuestionDTO questionDTO:quiz.getQuestions()){
                 try{
-                    List<QuestionDTO> ans = questionCreationDataService.getQuestionById(questionDTO.getId());
+                    List<QuestionDTO> ans = questionReportingDataService.getQuestionById(questionDTO.getId());
                     result.setTotalQuestions(result.getTotalQuestions()+1);
                     if(compute(questionDTO.getChoices(),ans.get(0).getChoices()))
                     result.setScore(result.getScore()+1);
@@ -86,6 +86,7 @@ public class QuizReportingDataService {
 
                 }
             }
+            result.setPercentageAccuracy((result.getScore()/result.getTotalQuestions())*100);
             return result;
         }
         return null;

@@ -29,14 +29,14 @@ public class GenericDAO<T> {
     }
 
     public List<T> search(T criteria, Function<T,Map<String,Object>> getParamsFunction, String queryString){
-        em.getTransaction().begin(); em.getTransaction().commit();
+        em.getTransaction().begin();
         Query query = em.createQuery(queryString);
 
         Map<String,Object> params = getParamsFunction.apply(criteria);
         for (Map.Entry<String, Object> param : params.entrySet()) {
             query.setParameter(param.getKey(), param.getValue());
         }
-
+        em.getTransaction().commit();
         List<T> resultList = query.getResultList();
         return resultList;
 
