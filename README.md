@@ -8,4 +8,4 @@ Framework used: Spring frameword
 Once extracted compile and run the followingin your browser and if hellow world is displayed you are good to go: http://localhost:8080/hello 
 
 Possible fixes:
-You might need to configure the according to your postgresql username and password and the public schema location
+You might need to configure the https://github.com/exposedbee/2021quiz-rest/blob/master/src/main/resources/META-INF/persistence.xml file according to your postgresql username and password and the public schema location
