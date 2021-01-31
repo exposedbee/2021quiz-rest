@@ -29,100 +29,77 @@ public class quizApplication {
     private QuestionReportingDataService questionReportingDataService;
     ObjectMapper mapper;
 
-    quizApplication(){
-        quizReportingDataService= new QuizReportingDataService();
-        quizCreationDataService =new QuizCreationDataService();
-        questionReportingDataService =new QuestionReportingDataService();
+    quizApplication() {
+        quizReportingDataService = new QuizReportingDataService();
+        quizCreationDataService = new QuizCreationDataService();
+        questionReportingDataService = new QuestionReportingDataService();
         mapper = new ObjectMapper();
 
     }
 
     public static void main(String[] args) {
-        ConfigurableApplicationContext context=SpringApplication.run(quizApplication.class, args);
+        ConfigurableApplicationContext context = SpringApplication.run(quizApplication.class, args);
         System.out.println("listening in port : http://localhost:8080/hello");
     }
 
+    //function to check the working of the application
     @GetMapping("/hello")
     public static String hello(@RequestParam(value = "name", defaultValue = "World") String name) {
 
-        Question question=new Question();
+        Question question = new Question();
         question.setDifficulty(3);
         question.setQuestionTitle("This is a test");
-        QuestionDAO questionDAO=new QuestionDAO();
+        QuestionDAO questionDAO = new QuestionDAO();
         questionDAO.create(question);
         return String.format("Hello %s!", name);
     }
 
 
-    @RequestMapping(
-            value = "/process")
-    public void process(@RequestBody Map<String, Object> payload)
-            throws Exception {
-        Question question=new Question();
-        question.setQuestionId(94);
-        QuestionDAO questionDAO=new QuestionDAO();
-        List<Question> questionDAOList= questionDAO.searchSpecificQuestion(question);
-        for(Question temp: questionDAOList)
-        {
-            System.out.println(temp.toString());
-        }
-        System.out.println(payload);
-    }
-
+    //function to create a new quiz entity and add it to the quiz table
     @RequestMapping(
             value = "/create/quiz")
-    public String createQuiz(@RequestBody Map<String, Object> payload)
+    public ResponseEntity<String> createQuiz(@RequestBody Map<String, Object> payload)
             throws Exception {
         String jsonString = mapper.writeValueAsString(payload);
-        System.out.println(jsonString);
         quizCreationDataService.createQuiz(jsonString);
-        System.out.println(payload);
-        return String.format("Success");
+        return ResponseEntity.ok("Success");
 
     }
 
+    //request to get all the quizes present in the quiz table
     @GetMapping(
             value = "/search/quiz")
-    public String searchQuiz()
+    public ResponseEntity<String> searchQuiz()
             throws Exception {
-        List<QuizDTO> quizDTO= quizCreationDataService.searchQuizAll();
+        List<QuizDTO> quizDTO = quizCreationDataService.searchQuizAll();
         String jsonString = mapper.writeValueAsString(quizDTO);
-        System.out.println(jsonString);
-        return jsonString;
+        return ResponseEntity.ok(jsonString);
 
     }
+
+    //function searche a quiz by its id(quizes that are stored in quiz table in the db)
     @GetMapping(
             value = "/search/quiz/id")
-    public String searchQuizById(@RequestParam(value = "id") int id)
+    public ResponseEntity<String> searchQuizById(@RequestParam(value = "id") int id)
             throws Exception {
         String jsonString = mapper.writeValueAsString(quizCreationDataService.searchQuizById(id));
-        System.out.println(jsonString);
-        return jsonString;
+        return ResponseEntity.ok(jsonString);
 
     }
 
+    //function to update a already existing quiz
     @RequestMapping(
             value = "/update/quiz")
-    public String updateQuiz(@RequestBody Map<String, Object> payload)
+    public ResponseEntity<Map<String, Object>> updateQuiz(@RequestBody Map<String, Object> payload)
             throws Exception {
         QuizDTO quiz;
         String jsonString = mapper.writeValueAsString(payload);
-        quiz= mapper.readValue(jsonString, QuizDTO.class);
+        quiz = mapper.readValue(jsonString, QuizDTO.class);
         quizCreationDataService.updateQuiz(quiz);
-        return String.valueOf(payload);
+        return ResponseEntity.ok(payload);
     }
 
-//    @RequestMapping(
-//            value = "/delete/quiz")
-//    public String deleteQuiz(@RequestBody Map<String, Object> payload)
-//            throws Exception {
-//        QuizDTO quiz;
-//        String jsonString = mapper.writeValueAsString(payload);
-//        quiz= mapper.readValue(jsonString, QuizDTO.class);
-//        quizReportingDataService.updateQuiz(quiz);
-//        return String.valueOf(payload);
-//    }
-
+    //Function to create new questions and its choices
     @RequestMapping(
             value = "/create/question")
     public ResponseEntity<String> createNewQuestion(@RequestBody Map<String, Object> payload)
@@ -131,41 +108,47 @@ public class quizApplication {
         try {
             String jsonString = mapper.writeValueAsString(payload);
             questionDTO = mapper.readValue(jsonString, QuestionDTO.class);
-//            System.out.println(questionDTO.toString())
 
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
-        if(!questionReportingDataService.createQuestion(questionDTO)) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Json missing element");
+        if (!questionReportingDataService.createQuestion(questionDTO))
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Json missing element");
         return ResponseEntity.ok("Success");
     }
+
+    //request to get access to all the questions present in the database qwith their choices
     @GetMapping(
             value = "/search/question")
-    public String getAllQuestion() throws JsonProcessingException {
-        List<QuestionDTO> result= questionReportingDataService.searchQuestionAll();
+    public ResponseEntity<String> getAllQuestion() throws JsonProcessingException {
+        List<QuestionDTO> result = questionReportingDataService.searchQuestionAll();
         ObjectMapper mapper = new ObjectMapper();
         String output = mapper.writeValueAsString(result);
-        System.out.println(result);
-        return String.format(output);
+        return ResponseEntity.ok(output);
     }
+
+    //search a question by its id
     @GetMapping(
             value = "/search/question/id")
-    public String getAllQuestion(@RequestParam(value = "id") int id) throws JsonProcessingException {
+    public ResponseEntity<String> getAllQuestion(@RequestParam(value = "id") int id) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         String output = mapper.writeValueAsString(questionReportingDataService.getQuestionById(id));
-        return String.format(output);
+        return ResponseEntity.ok(output);
     }
+
+    //requesto to delete a choice present in question
     @PostMapping(
             value = "/delete/choice")
     public ResponseEntity<String> deleteChoiceById(@RequestParam(value = "id") int id) throws JsonProcessingException {
-        if(quizCreationDataService.deleteChoice(id)) {
+        if (quizCreationDataService.deleteChoice(id)) {
             String jsonString = mapper.writeValueAsString(questionReportingDataService.getChoiceById(id));
             return ResponseEntity.ok(jsonString);
-        }
-            else
+        } else
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad id");
     }
 
+
+    //Request to update a existing quiz
     @PostMapping(
             value = "/update/question")
     public ResponseEntity<Object> updateQuestion(@RequestBody Map<String, Object> payload) throws JsonProcessingException {
@@ -174,51 +157,71 @@ public class quizApplication {
         String jsonString = mapper.writeValueAsString(payload);
         try {
             question = mapper.readValue(jsonString, QuestionDTO.class);
-            if(questionReportingDataService.updateQuestion(question)) {
+            if (questionReportingDataService.updateQuestion(question)) {
                 jsonString = mapper.writeValueAsString(questionReportingDataService.getQuestionById(question.getId()));
                 return ResponseEntity.ok(jsonString);
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
         }
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request");
 
     }
 
+    //adds a question to a quiz
+    //INPUT: required question id and quiz id json format
+    //OUTPUT: questionDTO jsonformat
     @PostMapping(
             value = "/quiz/addQuestion")
     public ResponseEntity<String> addQuestionToQuiz(@RequestBody Map<String, Object> payload) throws JsonProcessingException {
         QuestionDTO question;
         String jsonString = mapper.writeValueAsString(payload);
-        question= mapper.readValue(jsonString, QuestionDTO.class);
-//        System.out.println(question.getQuiz()+" Questioni d="+question.getId());
+        question = mapper.readValue(jsonString, QuestionDTO.class);
         quizCreationDataService.addQuestionToQuiz(question);
         jsonString = mapper.writeValueAsString(questionReportingDataService.getQuestionById(question.getId()));
         return ResponseEntity.ok(jsonString);
     }
 
-    @GetMapping(
-            value = "/quiz/questions")
-    public String getAllQuestionForQuiz(@RequestParam(value = "id") int id) throws JsonProcessingException {
-        String output = mapper.writeValueAsString(quizReportingDataService.getQuestionsForQuiz(id,0));
-        return String.format(output);
+    //removes a question from a quiz
+    @PostMapping(
+            value = "/quiz/remove/Question")
+    public ResponseEntity<String> removeQuestionFromQuiz(@RequestParam(value = "id") int id) throws JsonProcessingException {
+        QuestionDTO question = new QuestionDTO();
+        String jsonString;
+        question.setId(id);
+        quizCreationDataService.removeQuestionFromQuiz(question);
+        jsonString = mapper.writeValueAsString(questionReportingDataService.getQuestionById(question.getId()));
+        return ResponseEntity.ok(jsonString);
     }
 
+    //Request to get all questions that belong to a perticular quiz
+    @GetMapping(
+            value = "/quiz/questions")
+    public ResponseEntity<String> getAllQuestionForQuiz(@RequestParam(value = "id") int id) throws JsonProcessingException {
+        String output = mapper.writeValueAsString(quizReportingDataService.getQuestionsForQuiz(id, 0));
+        return ResponseEntity.ok(output);
+    }
+
+    //sents all the questions of a quiz but changes the choice validity to false for all choices
     @GetMapping(
             value = "/quiz/takeQuiz")
-    public String takeQuizById(@RequestParam(value = "id") int id) throws JsonProcessingException {
-        String output = mapper.writeValueAsString(quizReportingDataService.getQuestionsForQuiz(id,1));
-        return String.format(output);
+    public ResponseEntity<String> takeQuizById(@RequestParam(value = "id") int id) throws JsonProcessingException {
+        String output = mapper.writeValueAsString(quizReportingDataService.getQuestionsForQuiz(id, 1));
+        return ResponseEntity.ok(output);
     }
+
+
+    //called when you want to validate a quiz and get result
+    //Indput:Questions with all their choices and valid:true or false
     @GetMapping(
             value = "/quiz/validate")
-    public String quizValidation(@RequestBody Map<String, Object> payload) throws JsonProcessingException {
+    public ResponseEntity<String> quizValidation(@RequestBody Map<String, Object> payload) throws JsonProcessingException {
         QuizDTO question;
         String jsonString = mapper.writeValueAsString(payload);
-        question= mapper.readValue(jsonString, QuizDTO.class);
-        Validate r=quizReportingDataService.getQuizResult(question);
-        return String.format(r.toString());
+        question = mapper.readValue(jsonString, QuizDTO.class);
+        jsonString = mapper.writeValueAsString(quizReportingDataService.getQuizResult(question));
+        return ResponseEntity.ok(jsonString);
     }
+
 
 }

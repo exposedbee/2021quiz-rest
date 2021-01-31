@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import database.Quiz;
 
 import java.util.List;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class QuizDTO {
 
@@ -44,18 +45,18 @@ public class QuizDTO {
         this.topics = topics;
     }
 
-    public Quiz toDataBase(){
-        Quiz quiz=new Quiz();
+    public Quiz toDataBase() {
+        Quiz quiz = new Quiz();
         quiz.setQuizID(this.id);
         quiz.setQuizname(this.quizname);
         quiz.setTopics(this.topics);
         return quiz;
     }
 
-    public void fromDataModel(Quiz quiz){
-        this.id=quiz.getQuizID();
-        this.quizname=quiz.getQuizname();
-        this.topics=quiz.getTopics();
+    public void fromDataModel(Quiz quiz) {
+        this.id = quiz.getQuizID();
+        this.quizname = quiz.getQuizname();
+        this.topics = quiz.getTopics();
     }
 
     @Override

@@ -10,21 +10,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+//class interacts directly with the Question Entity
 public class QuestionDAO extends GenericDAO<Question> {
-
+    //function to add a new question
     public void create(Question o) {
         super.create(o);
     }
 
-    public void update(Question questionUpdate){
-        Question quiz = find(Question.class,questionUpdate.getQuestionId());
+    //function to update a pre existing question
+    public void update(Question questionUpdate) {
+        Question quiz = find(Question.class, questionUpdate.getQuestionId());
         quiz.setQuestionTitle(questionUpdate.getQuestionTitle());
         super.update(quiz);
     }
 
-    public List<Question> searchSpecificQuestion(Question criteria){
+    //Function to search a question by its id
+    public List<Question> searchSpecificQuestion(Question criteria) {
         Function<Question, Map<String, Object>> getParamsFunction = question -> {
-            Map<String, Object> parameters = new HashMap<String,Object>();
+            Map<String, Object> parameters = new HashMap<String, Object>();
             parameters.put("id", criteria.getQuestionId());
             return parameters;
         };
@@ -32,9 +35,10 @@ public class QuestionDAO extends GenericDAO<Question> {
         return super.search(criteria, getParamsFunction, "from Question where id=:id ");
     }
 
-    public List<Question> getQuestionsOfQuiz(Question criteria){
+    //Functions to return questions that belong to a particular quiz entity(Quiz_id)
+    public List<Question> getQuestionsOfQuiz(Question criteria) {
         Function<Question, Map<String, Object>> getParamsFunction = question -> {
-            Map<String, Object> parameters = new HashMap<String,Object>();
+            Map<String, Object> parameters = new HashMap<String, Object>();
             parameters.put("id", criteria.getQuiz().getQuizID());
             return parameters;
         };
@@ -42,12 +46,8 @@ public class QuestionDAO extends GenericDAO<Question> {
         return super.search(criteria, getParamsFunction, "from Question where quiz_id=:id ");
     }
 
-//    public List<Question> getAllAvailableQuestion(){
-//        return super.search(null, choice -> new HashMap(), "from Question where quiz_id=null ");
-////        return super.search(criteria, getParamsFunction, "from Question where quiz_id=:id ");
-//    }
-
+    //Dunction to find a single question by id
     public Question find(Question toDataModelWithId) {
-        return super.find(Question.class,toDataModelWithId.getQuestionId());
+        return super.find(Question.class, toDataModelWithId.getQuestionId());
     }
 }

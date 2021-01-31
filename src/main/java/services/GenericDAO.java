@@ -11,28 +11,28 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+//Hybernate and entity manager generic class for all the entities present
 public class GenericDAO<T> {
 
     protected EntityManager em;
 
-    GenericDAO(){
+    GenericDAO() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("my-persistence-unit");
         em = emf.createEntityManager();
-//        em.getTransaction().begin();
     }
 
-    public void create(T o){
+    public void create(T o) {
         em.getTransaction().begin();
         em.persist(o);
         em.getTransaction().commit();
 
     }
 
-    public List<T> search(T criteria, Function<T,Map<String,Object>> getParamsFunction, String queryString){
+    public List<T> search(T criteria, Function<T, Map<String, Object>> getParamsFunction, String queryString) {
         em.getTransaction().begin();
         Query query = em.createQuery(queryString);
 
-        Map<String,Object> params = getParamsFunction.apply(criteria);
+        Map<String, Object> params = getParamsFunction.apply(criteria);
         for (Map.Entry<String, Object> param : params.entrySet()) {
             query.setParameter(param.getKey(), param.getValue());
         }
@@ -42,18 +42,17 @@ public class GenericDAO<T> {
 
     }
 
-    public void update(T o){
+    public void update(T o) {
         em.getTransaction().begin();
         em.merge(o);
         em.getTransaction().commit();
     }
 
-    public T find(Class<T> o, Integer val){
+    public T find(Class<T> o, Integer val) {
         return em.find(o, val);
     }
 
     protected void delete(T o) {
-//        em.getTransaction().begin();
         em.remove(o);
         em.getTransaction().commit();
     }

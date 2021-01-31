@@ -3,13 +3,13 @@ package database;
 import javax.naming.Name;
 import javax.persistence.*;
 import java.util.Arrays;
-
+//Entity for Quiz table
 @Entity
-@Table(name="Quiz")
+@Table(name = "Quiz")
 public class Quiz {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name="ID")
+    @Column(name = "ID")
     private Integer quizID;
 
     private String quizname;

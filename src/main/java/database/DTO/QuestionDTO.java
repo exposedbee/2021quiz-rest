@@ -8,6 +8,7 @@ import database.Question;
 
 import java.util.ArrayList;
 import java.util.List;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class QuestionDTO {
 
@@ -61,32 +62,37 @@ public class QuestionDTO {
         Question question = new Question();
 //        if(this.id) question.setQuestionId(id);
         question.setQuestionTitle(questionTitle);
+        question.setTopic(topic);
         return question;
     }
+
     public Question toDataModelWithId() {
         Question question = new Question();
         question.setQuestionId(id);
+        question.setTopic(topic);
         question.setQuestionTitle(questionTitle);
         return question;
     }
 
     public void fromDataModel(Question question) {
         this.questionTitle = question.getQuestionTitle();
+        this.topic=question.getTopic();
         this.id = question.getQuestionId();
     }
 
-    public boolean checkVaildity(int i){
-        boolean flag=false;
-        if(i==0){
-            int c=choices.size();
-            if((this.questionTitle.length() <10) || (c<2))
-            { return false;}
-            for (MCQChoiceDTO choiceDTO:choices){
-                if(choiceDTO.getValid()==true)
-                    flag=true;
+    public boolean checkVaildity(int i) {
+        boolean flag = false;
+        if (i == 0) {
+            int c = choices.size();
+            if ((this.questionTitle.length() < 10) || (c < 2)) {
+                return false;
+            }
+            for (MCQChoiceDTO choiceDTO : choices) {
+                if (choiceDTO.getValid() == true)
+                    flag = true;
             }
         }
-        System.out.println("Size is equal to="+choices.size());
+        System.out.println("Size is equal to=" + choices.size());
         return flag;
     }
 

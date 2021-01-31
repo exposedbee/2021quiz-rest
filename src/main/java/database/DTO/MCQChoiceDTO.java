@@ -3,6 +3,7 @@ package database.DTO;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import database.MCQChoice;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MCQChoiceDTO {
     private int id;
@@ -59,6 +60,6 @@ public class MCQChoiceDTO {
 
     @Override
     public String toString() {
-        return "MCQChoiceDTO [id=" + id + ", choiceTitle=" + choiceTitle + "valid=" +valid + "]";
+        return "MCQChoiceDTO [id=" + id + ", choiceTitle=" + choiceTitle + "valid=" + valid + "]";
     }
 }

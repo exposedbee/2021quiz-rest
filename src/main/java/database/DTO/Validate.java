@@ -14,11 +14,12 @@ public class Validate {
                 '}';
     }
 
-    public Validate(){
-        this.score=0;
-        this.totalQuestions=0;
-        this.percentageAccuracy= (float) 0.0;
+    public Validate() {
+        this.score = 0;
+        this.totalQuestions = 0;
+        this.percentageAccuracy = (float) 0.0;
     }
+
     public int getScore() {
         return score;
     }

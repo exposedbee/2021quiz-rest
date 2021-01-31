@@ -2,9 +2,9 @@ package database;
 
 import javax.persistence.*;
 import java.util.Arrays;
-
+//entiry for Question table
 @Entity
-@Table(name="QUESTIONS")
+@Table(name = "QUESTIONS")
 public class Question {
 
     @Id
@@ -45,7 +45,7 @@ public class Question {
     }
 
     public void setTopic(String topics) {
-        this.topic = topic;
+        this.topic = topics;
     }
 
     public Integer getDifficulty() {
